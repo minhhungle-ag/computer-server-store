@@ -13,7 +13,7 @@ mongoose.connect(
         process.env.MONGOOSE_ATLAS_PW +
         '@cluster0.sla4oco.mongodb.net/?retryWrites=true&w=majority',
     () => {
-        console.log('connected mongoose')
+        console.log('connected mongoose', process.env.MONGOOSE_ATLAS_PW)
     }
 )
 app.use(bodyParser.urlencoded({ extended: false }))

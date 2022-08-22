@@ -9,16 +9,6 @@ const mongoose = require('mongoose')
 const currentLimit = 5
 const currentPage = 1
 
-function writeToProductsFile(productList) {
-    try {
-        fs.writeFileSync('./data/products.json', JSON.stringify(productList), () =>
-            console.log('Write file success')
-        )
-    } catch (error) {
-        console.log('write file failed: ', error)
-    }
-}
-
 router.get('/', (req, res, next) => {
     const startIdx = ((req.query.page || currentPage) - 1) * (req.query.limit || currentLimit)
     const limit = req.query.limit || currentLimit
