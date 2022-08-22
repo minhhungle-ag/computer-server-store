@@ -1,0 +1,40 @@
+[
+    {
+        "id": "288b92f6-5095-4143-ad32-24b3801ef0c0",
+        "name": "Core i7",
+        "price": 15000000,
+        "imageUrl": "https://studio8tech.com/techronic/501-home_default/wrist-watch.jpg",
+        "description": "",
+        "createdAt": 1661102733591,
+        "updatedAt": 1661102909252
+    },
+    {
+        "id": "d01c8611-9e75-456d-bff3-836884c5c709",
+        "name": "Core i9",
+        "price": 15000000,
+        "imageUrl": "https://studio8tech.com/techronic/501-home_default/wrist-watch.jpg",
+        "description": "",
+        "createdAt": 1661102720322
+    },
+    {
+        "id": "060f2b1f-40f2-4d23-8fe8-0af04da5051d",
+        "name": "Core i3",
+        "price": 15000000,
+        "imageUrl": "https://studio8tech.com/techronic/501-home_default/wrist-watch.jpg",
+        "description": ""
+    },
+    {
+        "id": "d05ad679-c842-4c6b-9772-dade91efbe1e",
+        "name": "Core i5",
+        "price": 15000000,
+        "imageUrl": "https://studio8tech.com/techronic/501-home_default/wrist-watch.jpg",
+        "description": ""
+    },
+    {
+        "id": "304dcb33-93bf-4058-8ce7-8e532b48aa2d",
+        "name": "Core i7",
+        "price": 15000000,
+        "imageUrl": "https://studio8tech.com/techronic/501-home_default/wrist-watch.jpg",
+        "description": ""
+    }
+]
