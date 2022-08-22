@@ -3,11 +3,19 @@ const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const dotenv = require('dotenv')
 const productRouters = require('./api/routes/products')
-
+const mongoose = require('mongoose')
 dotenv.config()
 const app = express()
 
 app.use(morgan('dev'))
+mongoose.connect(
+    'mongodb+srv://haless132:' +
+        process.env.MONGOOSE_ATLAS_PW +
+        '@cluster0.sla4oco.mongodb.net/?retryWrites=true&w=majority',
+    () => {
+        console.log('connected mongoose')
+    }
+)
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
@@ -43,3 +51,5 @@ app.use((error, req, res, next) => {
 })
 
 module.exports = app
+
+//computers-service

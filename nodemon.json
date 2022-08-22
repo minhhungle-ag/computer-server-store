@@ -1,0 +1,5 @@
+{
+  "env": {
+    "MONGOOSE_ATLAS_PW": "computers-service"
+  }
+}

@@ -3,9 +3,11 @@ const router = express.Router()
 const uuid = require('uuid').v4
 const productList = require('../../data/products.json')
 const fs = require('fs')
+const Product = require('../models/product')
+const mongoose = require('mongoose')
 
-const limit = 5
-const page = 1
+const currentLimit = 5
+const currentPage = 1
 
 function writeToProductsFile(productList) {
     try {
@@ -18,84 +20,101 @@ function writeToProductsFile(productList) {
 }
 
 router.get('/', (req, res, next) => {
-    const startIdx = ((req.query.page || page) - 1) * (req.query.limit || limit)
+    const startIdx = ((req.query.page || currentPage) - 1) * (req.query.limit || currentLimit)
+    const limit = req.query.limit || currentLimit
 
-    const newProductList = [...productList]
-    const total = newProductList.length
-    const totalPage = Math.ceil(newProductList.length / (req.query.limit || limit))
+    Product.find()
+        .exec()
+        .then((docs) => {
+            if (Array.isArray(docs)) {
+                const total = docs.length
+                const totalPage = Math.ceil(docs.length / (req.query.limit || limit))
 
-    res.status(200).json({
-        pagination: {
-            page: req.query.page || page,
-            limit: req.query.limit || limit,
-            total: total,
-            total_page: totalPage,
-        },
-        data: newProductList.splice(startIdx, req.query.limit || limit),
-    })
+                res.status(200).json({
+                    pagination: {
+                        page: req.query.page || page,
+                        limit: req.query.limit || limit,
+                        total: total,
+                        total_page: totalPage,
+                    },
+                    data: docs.splice(startIdx, req.query.limit || limit).reverse(),
+                })
+            }
+        })
+        .catch((error) => {
+            res.status(500).json({ error: error })
+        })
 })
 
 router.get('/:productId', (req, res, next) => {
     const productId = req.params.productId
-    const product = [...productList].find((item) => item.id === productId)
-    res.status(200).json(product)
+    Product.findById(productId)
+        .exec()
+        .then((doc) => {
+            console.log(`From DB id: ${doc._id}`)
+            res.status(200).json(doc)
+        })
+        .catch((error) => {
+            res.status(500).json({ error: error.message })
+        })
 })
 
 router.post('/', async (req, res, next) => {
-    const product = {
-        id: uuid(),
+    const product = new Product({
+        _id: new mongoose.Types.ObjectId(),
         name: req.body.name,
         price: req.body.price,
         imageUrl: req.body.imageUrl,
         description: req.body.description,
         createdAt: new Date().getTime(),
-        updatedAt: '',
-    }
+    })
 
-    const newProductList = [product, ...productList]
-    writeToProductsFile(newProductList)
-    res.status(200).json(product)
+    product
+        .save()
+        .then((result) => {
+            res.status(200).json(result)
+        })
+        .catch((error) => {
+            console.log('Failed to add product: ', error)
+            res.status(500).json({ error: error.message })
+        })
 })
 
 router.patch('/:productId', (req, res, next) => {
     const productId = req.params.productId
-    const newProductList = [...productList]
-
-    if (!productId || newProductList.length === 0) return
-
-    const idx = newProductList.findIndex((item) => item.id === productId)
-
-    const product = {
-        id: productId,
-        name: req.body.name,
-        price: req.body.price,
-        imageUrl: req.body.imageUrl,
-        description: req.body.description,
-        createdAt: newProductList[idx].createdAt,
-        updatedAt: new Date().getTime(),
-    }
-
-    newProductList[idx] = product
-
-    writeToProductsFile(newProductList)
-
-    res.status(200).json(newProductList[idx])
+    Product.updateOne(
+        { _id: productId },
+        {
+            $set: {
+                name: req.body.name,
+                price: req.body.price,
+                imageUrl: req.body.imageUrl,
+                description: req.body.description,
+                updatedAt: new Date().getTime(),
+            },
+        }
+    )
+        .exec()
+        .then((result) => {
+            res.status(200).json(result)
+        })
+        .catch((error) => {
+            console.log('Failed to updated product: ', error)
+            res.status(500).json({ error: error.message })
+        })
 })
 
 router.delete('/:productId', (req, res, next) => {
     const productId = req.params.productId
-    const newProductList = [...productList]
-
-    if (!productId || newProductList.length === 0) return
-    const idx = newProductList.findIndex((item) => item.id === productId)
-
-    newProductList.splice(idx, 1)
-
-    writeToProductsFile(newProductList)
-
-    res.status(200).json({
-        message: `DELETED PRODUCT ID ${productId}`,
-    })
+    Product.remove({ _id: productId })
+        .exec()
+        .then((result) => {
+            res.status(200).json(result)
+        })
+        .catch((error) => {
+            console.log('Failed to deleted product: ', error)
+            res.status(500).json({ error: error.message })
+        })
 })
 
 module.exports = router
