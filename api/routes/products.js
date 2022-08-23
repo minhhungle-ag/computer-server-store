@@ -1,7 +1,5 @@
 const express = require('express')
 const router = express.Router()
-const uuid = require('uuid').v4
-const productList = require('../../data/products.json')
 const fs = require('fs')
 const Product = require('../models/product')
 const mongoose = require('mongoose')
@@ -32,7 +30,7 @@ router.get('/', (req, res, next) => {
             }
         })
         .catch((error) => {
-            res.status(500).json({ error: error })
+            res.status(500).json({ error: error.message })
         })
 })
 
